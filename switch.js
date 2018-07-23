@@ -60,6 +60,10 @@ io.on('connection', socket => {
                 message: data.message
             }));
 
+            io.to(data.controllerId).emit('feedback', JSON.stringify({
+                deviceId: data.deviceId,
+                message: 'Sent'
+            }));
         } else {
             io.to(data.controllerId).emit('feedback', JSON.stringify({
                 deviceId: data.deviceId,

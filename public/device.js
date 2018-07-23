@@ -16,6 +16,12 @@ socket.on('id', id => {
 socket.on('message', message => {
     message = JSON.parse(message);
     let li = document.createElement('li');
-    li.innerHTML = `<h3>${message}</h3>`;
+
+    if(message === 'Sent') {
+        li.innerHTML = `<i><h4>${message}</h4></i>`;
+    } else {
+        li.innerHTML = `<h3>${message}</h3>`;
+    }
+
     document.querySelector('.chat').appendChild(li);
 });

@@ -53,7 +53,7 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {
         console.log('A device disconnected');
-        socketSwitch.emit('leave', JSON.stringify(socket.id));
+        socketSwitch.emit('leave', JSON.stringify(id.deviceId));
     });
 
     socket.on('connect_failed', () => {
