@@ -8,11 +8,10 @@ If you haven't mongoDB, please download.
 
 3. In different terminal run command: node controller.js.
 Controller connecte to switch server and listening on port 3000.
+You can also run in different terminal command: node controller2.js.
+Controller2 connected to switch server and listening on port 3001.
 
-( You can copy controller code and create another file and past code innto him, change listening port and run controller in different terminal.
-Both controllers will connect to switch server and would controll devices on their ports.)
-
-4. Open browser in http://localhost:3000 (or port what you set for controller) couple of time.
+4. Open browser in http://localhost:3000 (and 3001 for controller2 or port witch another controller have been running) couple of time.
 You will see the:
     * Your id: - field with device address (comprises socket.id of device and socket.id of depend controller);
     * Destination: - field where you write (past) destination device address;

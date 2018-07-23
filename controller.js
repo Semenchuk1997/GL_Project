@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const ioSwitch = require('socket.io-client');
+// connect controller to switch server
 const socketSwitch = ioSwitch.connect('http://localhost:8000', {reconnect: true});
 
 const socket = require('socket.io');
@@ -20,12 +21,14 @@ socketSwitch.on('connect', () => {
     id.controllerId = socketSwitch.id;
 });
 
+//get data from switch server and send the message to the specific device
 socketSwitch.on('switch', data => {
     data = JSON.parse(data);
 
     io.to(data.deviceId).emit('message', JSON.stringify(data.message));
 });
 
+//get data from switch server and send the message to device what made request
 socketSwitch.on('feedback', data => {
     data = JSON.parse(data);
 
@@ -36,18 +39,21 @@ io.on('connection', socket => {
     console.log('A device connected');
     id.deviceId = socket.id;
 
+    // send id to the page
     socket.emit('id', JSON.stringify(id.deviceId + id.controllerId));
-    socketSwitch.emit('register', JSON.stringify(id));
+    socketSwitch.emit('register', JSON.stringify(id)); // send request to server for register connected device
 
+    // data from device
     socket.on('send', data => {
         data = JSON.parse(data);
         data = Object.assign({}, data);
 
         const user = Object.assign(data, {
-            deviceId: data.id.slice(0, 20),
+            deviceId: data.id.slice(0, 20), //extract from full id , id of device and id of controller
             controllerId: data.id.slice(-20)
         });
 
+        //send to switch server
         socketSwitch.emit('data', JSON.stringify(user));
     });
 

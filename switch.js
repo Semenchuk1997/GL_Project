@@ -16,6 +16,7 @@ const Device = mongoose.model('Devices', new mongoose.Schema({
     relation: String
 }));
 
+// clean all data in the database
 (async() => {
     await Device.find().remove();
 })();
@@ -27,6 +28,7 @@ io.on('connection', socket => {
         data = JSON.parse(data);
         data = Object.assign({}, data);
 
+        //check if destination devise is registered on switch
         const deviceDest = await Device.findOne({ id: data.destination });
 
         if(!deviceDest) {
@@ -39,7 +41,7 @@ io.on('connection', socket => {
 
         if (deviceDest.free || deviceDest.relation === data.id) {
 
-            if(deviceDest.free) {
+            if(deviceDest.free) { //create kind of room for 2 devices and set both as busy
                 await Device.update({ id: data.id }, {
                     $set: {
                         free: false,
@@ -55,16 +57,19 @@ io.on('connection', socket => {
                 });
             }
 
+            //send to specific controller data with id of device and message
             io.to(data.destination.slice(-20)).emit('switch', JSON.stringify({
                 deviceId: data.destination.slice(0, 20),
                 message: data.message
             }));
 
+            //send to controller who made request feedback about success operation
             io.to(data.controllerId).emit('feedback', JSON.stringify({
                 deviceId: data.deviceId,
                 message: 'Sent'
             }));
         } else {
+            // in case if device is busy
             io.to(data.controllerId).emit('feedback', JSON.stringify({
                 deviceId: data.deviceId,
                 message: 'User is not allowed.'
@@ -72,6 +77,7 @@ io.on('connection', socket => {
         }
     });
 
+    //device register
     socket.on('register', async id => {
         id = JSON.parse(id);
         const device = await Device({
@@ -82,6 +88,7 @@ io.on('connection', socket => {
         await device.save();
     });
 
+    //if device after converstation leave ester set companion to free and remove device from database
     socket.on('leave', async id => {
         id = JSON.parse(id);
 
