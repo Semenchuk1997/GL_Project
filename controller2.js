@@ -4,7 +4,7 @@ const ioSwitch = require('socket.io-client');
 const socketSwitch = ioSwitch.connect('http://localhost:8000', {reconnect: true});
 
 const socket = require('socket.io');
-const server = app.listen(3000, () => console.log('Controller: Listening on port 3000...'));
+const server = app.listen(3001, () => console.log('Controller: Listening on port 3001...'));
 const io = socket(server);
 
 app.use(express.json());

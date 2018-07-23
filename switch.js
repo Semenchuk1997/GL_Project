@@ -55,7 +55,7 @@ io.on('connection', socket => {
                 });
             }
 
-            io.to(data.controllerId).emit('switch', JSON.stringify({
+            io.to(data.destination.slice(-20)).emit('switch', JSON.stringify({
                 deviceId: data.destination.slice(0, 20),
                 message: data.message
             }));
@@ -84,6 +84,13 @@ io.on('connection', socket => {
 
     socket.on('leave', async id => {
         id = JSON.parse(id);
+
+        await Device.update({ relation: id}, {
+            $set:{
+                free: true
+            }
+        });
+
         await Device.find({id: id}).remove();
     });
 
